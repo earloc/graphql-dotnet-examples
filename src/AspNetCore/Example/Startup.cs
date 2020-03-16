@@ -1,3 +1,5 @@
+using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Server;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +16,7 @@ namespace Example
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<StarWarsData>();
             services.AddSingleton<StarWarsQuery>();
             services.AddSingleton<StarWarsMutation>();
@@ -24,6 +27,9 @@ namespace Example
             services.AddSingleton<CharacterInterface>();
             services.AddSingleton<EpisodeEnum>();
             services.AddSingleton<ISchema, StarWarsSchema>();
+            services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
+            services.AddScoped<DataLoaderDocumentListener>();
+            services.AddSingleton<GraphQLMiddleware>();
 
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
@@ -54,7 +60,7 @@ namespace Example
                 app.UseDeveloperExceptionPage();
 
             // add http for Schema at default url /graphql
-            app.UseGraphQL<ISchema>();
+            app.UseMiddleware<GraphQLMiddleware>();
 
             // use graphql-playground at default url /ui/playground
             app.UseGraphQLPlayground();
