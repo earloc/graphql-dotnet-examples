@@ -16,7 +16,6 @@ namespace Example
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<StarWarsData>();
             services.AddSingleton<StarWarsQuery>();
             services.AddSingleton<StarWarsMutation>();
@@ -27,9 +26,6 @@ namespace Example
             services.AddSingleton<CharacterInterface>();
             services.AddSingleton<EpisodeEnum>();
             services.AddSingleton<ISchema, StarWarsSchema>();
-            services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
-            services.AddScoped<DataLoaderDocumentListener>();
-            services.AddSingleton<GraphQLMiddleware>();
 
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
@@ -60,7 +56,7 @@ namespace Example
                 app.UseDeveloperExceptionPage();
 
             // add http for Schema at default url /graphql
-            app.UseMiddleware<GraphQLMiddleware>();
+            app.UseGraphQL<StarWarsSchema>();
 
             // use graphql-playground at default url /ui/playground
             app.UseGraphQLPlayground();

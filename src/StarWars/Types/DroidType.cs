@@ -5,7 +5,7 @@ namespace StarWars.Types
 {
     public class DroidType : ObjectGraphType<Droid>
     {
-        public DroidType(StarWarsData data, IDataLoaderContextAccessor loaderContext)
+        public DroidType(StarWarsData data)
         {
             Name = "Droid";
             Description = "A mechanical creature in the Star Wars universe.";
@@ -25,9 +25,7 @@ namespace StarWars.Types
             FieldAsync<PlanetType>(
                 "manufacturedOn",
                 resolve: async context =>
-                    await loaderContext.Context.GetOrAddLoader($"planet_{context.Source.ManufacturdOn}", () =>
-                        data.GetPlanetByNameAsync(context.Source.ManufacturdOn)
-                    ).LoadAsync()
+                        await data.GetPlanetByNameAsync(context.Source.ManufacturdOn)
             );
         }
     }

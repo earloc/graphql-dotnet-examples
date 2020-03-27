@@ -22,9 +22,7 @@ namespace StarWars.Types
                 "homePlanet",
                 description: "The home planet of the human.",
                 resolve: async context =>
-                    await loaderContext.Context.GetOrAddLoader($"planet_{context.Source.HomePlanet}", () =>
-                        data.GetPlanetByNameAsync(context.Source.HomePlanet)
-                    ).LoadAsync()
+                        await data.GetPlanetByNameAsync(context.Source.HomePlanet)
             );
 
             Interface<CharacterInterface>();
