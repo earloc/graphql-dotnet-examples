@@ -24,6 +24,26 @@ namespace StarWars.Types
                 resolve: async context =>
                     await humanLoader.Instance.LoadAsync(context.Source.MostFamousJedi, CancellationToken.None)
             );
+            FieldAsync<BooleanGraphType>(
+                "IsDangerous",
+                resolve: async context =>
+                {
+                    var jedi = default(Human);
+                    if (context.Source.MostFamousJedi != null)
+                        jedi = await humanLoader.Instance.LoadAsync(context.Source.MostFamousJedi, CancellationToken.None);
+
+                    var sith = default(Human);
+                    if (context.Source.MostFamousSith != null)
+                        sith = await humanLoader.Instance.LoadAsync(context.Source.MostFamousSith, CancellationToken.None);
+
+                    if (sith is null)
+                        return false;
+                    if (jedi is null)
+                        return true;
+                    return false;
+                }
+
+            );
         }
     }
 }

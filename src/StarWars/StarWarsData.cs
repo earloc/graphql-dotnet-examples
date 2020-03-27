@@ -62,9 +62,16 @@ namespace StarWars
             {
                 Id = "Naboo",
                 Name = "Naboo",
-                MostFamousJedi = null,
+                MostFamousJedi = "42",
                 MostFamousSith = null
             });
+            _humans.Add(new Human
+            {
+                Id = "42",
+                Name = "Qui-Gon",
+                FavoriteDroid = "3",
+                HomePlanet = "Tatooine"
+            }); ;
         }
 
         public IEnumerable<StarWarsCharacter> GetFriends(StarWarsCharacter character)

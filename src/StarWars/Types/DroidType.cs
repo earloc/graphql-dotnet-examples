@@ -1,11 +1,13 @@
 using GraphQL.DataLoader;
 using GraphQL.Types;
+using StarWars.Loaders;
+using System.Threading;
 
 namespace StarWars.Types
 {
     public class DroidType : ObjectGraphType<Droid>
     {
-        public DroidType(StarWarsData data)
+        public DroidType(StarWarsData data, IScoped<IPlanetLoader> planetLoader)
         {
             Name = "Droid";
             Description = "A mechanical creature in the Star Wars universe.";
@@ -25,7 +27,7 @@ namespace StarWars.Types
             FieldAsync<PlanetType>(
                 "manufacturedOn",
                 resolve: async context =>
-                        await data.GetPlanetByNameAsync(context.Source.ManufacturdOn)
+                        await planetLoader.Instance.LoadAsync(context.Source.ManufacturdOn, CancellationToken.None)
             );
         }
     }
