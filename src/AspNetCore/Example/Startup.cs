@@ -1,3 +1,5 @@
+using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Server;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StarWars;
 using StarWars.Types;
+using GreenDonut;
+using StarWars.Loaders;
 
 namespace Example
 {
@@ -14,6 +18,7 @@ namespace Example
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<StarWarsData>();
             services.AddSingleton<StarWarsQuery>();
             services.AddSingleton<StarWarsMutation>();
@@ -24,10 +29,14 @@ namespace Example
             services.AddSingleton<CharacterInterface>();
             services.AddSingleton<EpisodeEnum>();
             services.AddSingleton<ISchema, StarWarsSchema>();
+            services.AddSingleton(typeof(IScoped<>), typeof(HttpContextServiceLocator<>));
+
+            services.AddScoped<IHumanLoader, HumanLoader>();
+            services.AddScoped<IPlanetLoader, PlanetLoader>();
+
 
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
-
             services.AddGraphQL(options =>
             {
                 options.EnableMetrics = true;

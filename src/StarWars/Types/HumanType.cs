@@ -1,10 +1,13 @@
+using GraphQL.DataLoader;
 using GraphQL.Types;
+using StarWars.Loaders;
+using System.Threading;
 
 namespace StarWars.Types
 {
     public class HumanType : ObjectGraphType<Human>
     {
-        public HumanType(StarWarsData data)
+        public HumanType(StarWarsData data, IScoped<IPlanetLoader> planetLoader)
         {
             Name = "Human";
 
@@ -17,10 +20,11 @@ namespace StarWars.Types
             );
             Field<ListGraphType<EpisodeEnum>>("appearsIn", "Which movie they appear in.");
 
-            Field<PlanetType>(
+            FieldAsync<PlanetType>(
                 "homePlanet",
                 description: "The home planet of the human.",
-                resolve: context => data.GetPlanetByNameAsync(context.Source.HomePlanet)
+                resolve: async context => 
+                        await planetLoader.Instance.LoadAsync(context.Source.HomePlanet, CancellationToken.None)
             );
 
             Interface<CharacterInterface>();
