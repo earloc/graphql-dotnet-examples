@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="GraphQL" Version="3.0.0-preview-1558" />
+    <PackageReference Include="GreenDonut" Version="10.4.0" />
   </ItemGroup>
 
 </Project>
