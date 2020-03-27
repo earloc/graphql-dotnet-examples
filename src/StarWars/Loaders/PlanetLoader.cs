@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace StarWars.Loaders
 {
-    interface IPlanetLoader : IDataLoader<string, Planet> { }
+    public interface IPlanetLoader : IDataLoader<string, Planet> { }
     public class PlanetLoader : DataLoaderBase<string, Planet>, IPlanetLoader
     {
         private readonly StarWarsData data;
 
         public PlanetLoader(StarWarsData data)
+            : base (new DataLoaderOptions<string>() { AutoDispatching = true })
         {
             this.data = data;
         }

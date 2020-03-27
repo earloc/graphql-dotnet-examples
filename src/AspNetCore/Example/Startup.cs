@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StarWars;
 using StarWars.Types;
+using GreenDonut;
+using StarWars.Loaders;
 
 namespace Example
 {
@@ -16,6 +18,7 @@ namespace Example
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<StarWarsData>();
             services.AddSingleton<StarWarsQuery>();
             services.AddSingleton<StarWarsMutation>();
@@ -26,10 +29,14 @@ namespace Example
             services.AddSingleton<CharacterInterface>();
             services.AddSingleton<EpisodeEnum>();
             services.AddSingleton<ISchema, StarWarsSchema>();
+            services.AddSingleton(typeof(IScoped<>), typeof(HttpContextServiceLocator<>));
+
+            services.AddScoped<IHumanLoader, HumanLoader>();
+            services.AddScoped<IPlanetLoader, PlanetLoader>();
+
 
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
-
             services.AddGraphQL(options =>
             {
                 options.EnableMetrics = true;
@@ -56,7 +63,7 @@ namespace Example
                 app.UseDeveloperExceptionPage();
 
             // add http for Schema at default url /graphql
-            app.UseGraphQL<StarWarsSchema>();
+            app.UseGraphQL<ISchema>();
 
             // use graphql-playground at default url /ui/playground
             app.UseGraphQLPlayground();

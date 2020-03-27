@@ -1,10 +1,12 @@
 using GraphQL.Types;
+using StarWars.Loaders;
+using System.Threading;
 
 namespace StarWars.Types
 {
     public class PlanetType : ObjectGraphType<Planet>
     {
-        public PlanetType(StarWarsData data)
+        public PlanetType(StarWarsData data, IScoped<IHumanLoader> humanLoader)
         {
             Name = "Planet";
             Description = "A planet in the Star Wars universe.";
@@ -12,13 +14,15 @@ namespace StarWars.Types
             Field(d => d.Id).Description("The id of the planet.");
             Field(d => d.Name, nullable: true).Description("The name of the dplanetroid.");
 
-            Field<HumanType>(
+            FieldAsync<HumanType>(
                 "mostFamousSith",
-                resolve: context => data.GetHumanByIdAsync(context.Source.MostFamousSith)
+                resolve: async context =>
+                    await humanLoader.Instance.LoadAsync(context.Source.MostFamousSith, CancellationToken.None)
             );
-            Field<HumanType>(
+            FieldAsync<HumanType>(
                 "mostFamousJedi",
-                resolve: context => data.GetHumanByIdAsync(context.Source.MostFamousJedi)
+                resolve: async context =>
+                    await humanLoader.Instance.LoadAsync(context.Source.MostFamousJedi, CancellationToken.None)
             );
         }
     }

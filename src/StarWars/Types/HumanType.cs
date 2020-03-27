@@ -1,11 +1,13 @@
 using GraphQL.DataLoader;
 using GraphQL.Types;
+using StarWars.Loaders;
+using System.Threading;
 
 namespace StarWars.Types
 {
     public class HumanType : ObjectGraphType<Human>
     {
-        public HumanType(StarWarsData data, IDataLoaderContextAccessor loaderContext)
+        public HumanType(StarWarsData data, IScoped<IPlanetLoader> planetLoader)
         {
             Name = "Human";
 
@@ -21,8 +23,8 @@ namespace StarWars.Types
             FieldAsync<PlanetType>(
                 "homePlanet",
                 description: "The home planet of the human.",
-                resolve: async context =>
-                        await data.GetPlanetByNameAsync(context.Source.HomePlanet)
+                resolve: async context => 
+                        await planetLoader.Instance.LoadAsync(context.Source.HomePlanet, CancellationToken.None)
             );
 
             Interface<CharacterInterface>();
